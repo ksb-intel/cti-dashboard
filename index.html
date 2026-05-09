@@ -706,7 +706,6 @@ header { padding: 14px 16px; }
       <div id="weeks-list"></div>
     </div>
 
-```
 <!-- RIGHT: SIDEBAR -->
 <div class="sidebar">
 
@@ -753,7 +752,6 @@ header { padding: 14px 16px; }
   </div>
 
 </div>
-```
 
   </div>
 </div>
@@ -1336,8 +1334,8 @@ renderStats();
 
 function filterWeeks(filter, btn) {
 currentFilter = filter;
-document.querySelectorAll(’.filter-tab’).forEach(b => b.classList.remove(‘active’, ‘active-red’));
-btn.classList.add(‘active’);
+document.querySelectorAll(‘.filter-tab’).forEach(b => b.classList.remove(‘active’, ‘active-red’));
+btn.classList.add(filter === ‘Did Not Finish’ ? ‘active-red’ : ‘active’);
 renderWeeks();
 }
 
@@ -1368,7 +1366,7 @@ renderStats();
 
 function calcStreak() {
 if (!state.streak.length) return 0;
-const sorted = […state.streak].sort().reverse();
+const sorted = [...state.streak].sort().reverse();
 const today = new Date().toISOString().split(‘T’)[0];
 let streak = 0;
 let checkDate = today;
