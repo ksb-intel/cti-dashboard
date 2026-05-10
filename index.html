@@ -489,18 +489,48 @@ display: flex; align-items: center; gap: 8px;
 .sidebar-title::before { content: ''; width: 4px; height: 14px; background: var(--blue); display: inline-block; border-radius: 99px; }
 
 /* STREAK TRACKER */
-.streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.streak-nav {
+display: flex; align-items: center; justify-content: space-between;
+margin-bottom: 10px;
+}
+.streak-nav-btn {
+background: var(--bg-secondary); border: 1px solid var(--border);
+color: var(--text-secondary); cursor: pointer; padding: 4px 10px;
+border-radius: var(--radius-sm); transition: all 0.15s; font-size: 11px; line-height: 1;
+}
+.streak-nav-btn:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); background: var(--blue-glow); }
+.streak-nav-btn:disabled { opacity: 0.25; cursor: default; }
+.streak-range { font-family: var(--mono); font-size: 10px; color: var(--text-secondary); letter-spacing: 0.3px; }
+
+.streak-day-headers {
+display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+margin-bottom: 4px;
+}
+.streak-day-header {
+text-align: center; font-family: var(--mono); font-size: 8px;
+color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;
+padding: 2px 0;
+}
+
+.streak-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+
 .streak-day {
 aspect-ratio: 1; background: var(--bg-secondary);
-border-radius: 6px; position: relative; cursor: pointer;
+border-radius: 6px; cursor: pointer;
 transition: all 0.15s;
 border: 1px solid var(--border);
+display: flex; align-items: center; justify-content: center;
 }
+.streak-date-num { font-family: var(--mono); font-size: 9px; color: var(--text-dim); line-height: 1; user-select: none; }
 .streak-day.active { background: var(--blue); border-color: var(--blue); }
+.streak-day.active .streak-date-num { color: #fff; font-weight: 700; }
 .streak-day.active:hover { background: var(--green); border-color: var(--green); }
-.streak-day:not(.active):hover { background: var(--border); }
-.streak-legend { display: flex; gap: 8px; margin-top: 8px; align-items: center; font-family: var(--mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
-.streak-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+.streak-day:not(.active):not(.future):hover { background: var(--bg-card-hover); border-color: var(--border-bright); }
+.streak-day.today { border-color: var(--blue); border-width: 2px; }
+.streak-day.today:not(.active) .streak-date-num { color: var(--blue); font-weight: 700; }
+.streak-day.future { opacity: 0.25; cursor: default; pointer-events: none; }
+.streak-legend { display: flex; gap: 12px; margin-top: 10px; align-items: center; font-family: var(--mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+.streak-legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
 /* INTEL NOTES */
 .intel-textarea {
@@ -737,11 +767,11 @@ header { padding: 14px 16px; }
   <!-- STUDY STREAK -->
   <div class="sidebar-card">
     <div class="sidebar-title">Study Streak</div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:8px;letter-spacing:0.5px;">Click days to log study sessions (last 28 days)</div>
-    <div class="streak-grid" id="streak-grid"></div>
-    <div class="streak-legend" style="margin-top:10px;">
+    <div id="streak-grid"></div>
+    <div class="streak-legend">
       <div class="streak-legend-dot" style="background:var(--blue)"></div> Studied
-      <div class="streak-legend-dot" style="background:var(--border);margin-left:8px;"></div> Missed
+      <div class="streak-legend-dot" style="background:var(--border)"></div> Missed
+      <div class="streak-legend-dot" style="border:2px solid var(--blue);background:transparent"></div> Today
     </div>
   </div>
 
@@ -1186,19 +1216,52 @@ const container = document.getElementById('goals-list');
 container.innerHTML = state.goals.map((g, i) => `<div class="goal-item"> <div class="goal-check ${g.done ? 'checked' : ''}" onclick="toggleGoal(${i})">${g.done ? '✓' : ''}</div> <div class="goal-text ${g.done ? 'done-text' : ''}">${g.text}</div> </div>`).join('');
 }
 
+let streakWeekOffset = 0;
+
 function renderStreak() {
 const grid = document.getElementById('streak-grid');
 const today = new Date();
+const todayStr = today.toISOString().split('T')[0];
+
+// Anchor end to the Saturday of the current week + offset
+const dayOfWeek = today.getDay(); // 0=Sun … 6=Sat
+const endDate = new Date(today);
+endDate.setDate(today.getDate() + (6 - dayOfWeek) + streakWeekOffset * 7);
+
+const startDate = new Date(endDate);
+startDate.setDate(endDate.getDate() - 27);
+
 const days = [];
-for (let i = 27; i >= 0; i--) {
-const d = new Date(today);
-d.setDate(today.getDate() - i);
-days.push(d.toISOString().split('T')[0]);
+for (let i = 0; i < 28; i++) {
+  const d = new Date(startDate);
+  d.setDate(startDate.getDate() + i);
+  days.push(d.toISOString().split('T')[0]);
 }
-grid.innerHTML = days.map(d => {
-const active = state.streak.includes(d);
-return `<div class="streak-day ${active ? 'active' : ''}" onclick="toggleStreak('${d}')" title="${d}"></div>`;
-}).join('');
+
+const fmt = (d, opts) => d.toLocaleDateString('en-US', opts);
+const rangeLabel = `${fmt(startDate, { month: 'short', day: 'numeric' })} – ${fmt(endDate, { month: 'short', day: 'numeric', year: 'numeric' })}`;
+const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+grid.innerHTML = `
+<div class="streak-nav">
+  <button class="streak-nav-btn" onclick="shiftStreak(-1)">&#9664;</button>
+  <span class="streak-range">${rangeLabel}</span>
+  <button class="streak-nav-btn" onclick="shiftStreak(1)"${streakWeekOffset >= 0 ? ' disabled' : ''}>&#9654;</button>
+</div>
+<div class="streak-day-headers">${dayHeaders.map(h => `<div class="streak-day-header">${h}</div>`).join('')}</div>
+<div class="streak-days-grid">${days.map(d => {
+  const active = state.streak.includes(d);
+  const isToday = d === todayStr;
+  const isFuture = d > todayStr;
+  const dateNum = parseInt(d.split('-')[2]);
+  const cls = ['streak-day', active ? 'active' : '', isToday ? 'today' : '', isFuture ? 'future' : ''].filter(Boolean).join(' ');
+  return `<div class="${cls}"${!isFuture ? ` onclick="toggleStreak('${d}')"` : ''} title="${d}"><span class="streak-date-num">${dateNum}</span></div>`;
+}).join('')}</div>`;
+}
+
+function shiftStreak(dir) {
+streakWeekOffset = Math.min(0, streakWeekOffset + dir);
+renderStreak();
 }
 
 // ── INTERACTIONS ───────────────────────────────────────────────────────────
