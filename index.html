@@ -1079,23 +1079,23 @@ function weekCardHTML(w) {
 
   const taskDots = w.tasks.map(t => {
     const cls = t.status === 'Completed' ? 'done' : t.status === 'In Progress' ? 'inprog' : t.status === 'Did Not Finish' ? 'failed' : '';
-    return `<div class="mini-dot ${cls}" title="${t.label}: ${t.status}"></div>`;
+    return `<div class="mini-dot ${cls}" title="${esc(t.label)}: ${esc(t.status)}"></div>`;
   }).join('');
 
   const doneTasks = w.tasks.filter(t => t.status === 'Completed').length;
-  const dateStr = w.dateStarted ? `${w.dateStarted}${w.dateFinished ? ' → ' + w.dateFinished : ' → ...'}` : 'Not scheduled';
+  const dateStr = w.dateStarted ? `${esc(w.dateStarted)}${w.dateFinished ? ' → ' + esc(w.dateFinished) : ' → ...'}` : 'Not scheduled';
 
   const tasksHTML = w.tasks.map(t => taskBlockHTML(w.week, t)).join('');
   const quizHTML = quizSectionHTML(w.week, w.quizzes);
 
   return `
-  <div class="week-card" id="week-card-${w.week}" data-status="${w.status}">
+  <div class="week-card" id="week-card-${w.week}" data-status="${esc(w.status)}">
     <div class="week-card-header" onclick="toggleWeek(${w.week})">
       <div class="week-num">W${String(w.week).padStart(2,'0')}</div>
       <div class="week-header-content">
         <div class="week-title-row">
-          <div class="week-topic">${w.topic}</div>
-          <div class="status-badge ${statusBadge}">${w.status}</div>
+          <div class="week-topic">${esc(w.topic)}</div>
+          <div class="status-badge ${statusBadge}">${esc(w.status)}</div>
         </div>
         <div class="week-meta">
           <div class="week-date">${dateStr}</div>
@@ -1124,20 +1124,22 @@ function weekCardHTML(w) {
 }
 
 function taskBlockHTML(weekNum, task) {
+  const safeId = /^[a-z]+$/.test(task.id) ? task.id : 'unknown';
+  const safeDot = /^dot-[a-z]+$/.test(task.dot) ? task.dot : '';
   const statusBtns = ['Completed','In Progress','Did Not Finish','Not Started'].map(s => {
     const cls = task.status === s ? (s === 'Completed' ? 'done' : s === 'Did Not Finish' ? 'failed' : s === 'Not Started' ? '' : 'moved') : '';
-    return `<button class="task-btn ${cls}" onclick="setTaskStatus(${weekNum},'${task.id}','${s}')">${s === 'Not Started' ? 'Reset' : s}</button>`;
+    return `<button class="task-btn ${cls}" onclick="setTaskStatus(${weekNum},'${safeId}','${s}')">${s === 'Not Started' ? 'Reset' : s}</button>`;
   }).join('');
 
   return `
-  <div class="task-block" id="task-${weekNum}-${task.id}">
+  <div class="task-block" id="task-${weekNum}-${safeId}">
     <div class="task-label">
-      <div class="task-label-dot ${task.dot}"></div>
-      ${task.label}
+      <div class="task-label-dot ${safeDot}"></div>
+      ${esc(task.label)}
     </div>
-    <div class="task-text">${task.text}</div>
+    <div class="task-text">${esc(task.text)}</div>
     <div class="task-controls">${statusBtns}</div>
-    <textarea class="task-note-input" id="tasknote-${weekNum}-${task.id}" placeholder="// Notes..." oninput="saveTaskNote(${weekNum},'${task.id}',this.value)">${task.note || ''}</textarea>
+    <textarea class="task-note-input" id="tasknote-${weekNum}-${safeId}" placeholder="// Notes..." oninput="saveTaskNote(${weekNum},'${safeId}',this.value)">${esc(task.note || '')}</textarea>
 
   </div>`;
 }
@@ -1162,13 +1164,13 @@ const barColor = pct >= 85 ? 'var(--green)' : pct >= 70 ? 'var(--blue)' : 'var(-
 return `
 
   <div class="quiz-entry" id="quiz-entry-${weekNum}-${i}">
-    <input class="quiz-name-input" value="${q.name}" placeholder="Quiz name..." oninput="updateQuiz(${weekNum},${i},'name',this.value)" />
+    <input class="quiz-name-input" value="${esc(q.name)}" placeholder="Quiz name..." oninput="updateQuiz(${weekNum},${i},'name',this.value)" />
     <div>
-      <input class="quiz-score-input" value="${q.score}" placeholder="Score%" oninput="updateQuiz(${weekNum},${i},'score',this.value)" maxlength="3" />
+      <input class="quiz-score-input" value="${esc(q.score)}" placeholder="Score%" oninput="updateQuiz(${weekNum},${i},'score',this.value)" maxlength="3" />
       <div class="quiz-score-bar"><div class="quiz-score-fill" style="width:${pct}%;background:${barColor};"></div></div>
     </div>
-    <span style="font-family:var(--mono);font-size:13px;color:${barColor};font-weight:700;">${q.score ? q.score+'%' : '—'}</span>
-    <input class="quiz-note-input" value="${q.note || ''}" placeholder="Notes / weak areas..." oninput="updateQuiz(${weekNum},${i},'note',this.value)" />
+    <span style="font-family:var(--mono);font-size:13px;color:${barColor};font-weight:700;">${q.score ? esc(q.score)+'%' : '—'}</span>
+    <input class="quiz-note-input" value="${esc(q.note || '')}" placeholder="Notes / weak areas..." oninput="updateQuiz(${weekNum},${i},'note',this.value)" />
     <button class="quiz-remove-btn" onclick="removeQuiz(${weekNum},${i})">×</button>
   </div>`;
 }
@@ -1208,12 +1210,12 @@ document.getElementById('overall-pct').textContent = pct + '%';
 
 function renderCerts() {
 const container = document.getElementById('cert-tracker');
-container.innerHTML = state.certs.map((c, i) => `<div class="cert-item"> <div class="cert-name"><span>${c.name}</span><span class="cert-pct">${c.pct}%</span></div> <div class="cert-bar"><div class="cert-bar-fill" style="width:${c.pct}%;background:${c.color};"></div></div> <div class="cert-input-row"> <input class="cert-pct-input" type="number" min="0" max="100" value="${c.pct}" id="cert-input-${i}" /> <button class="cert-update-btn" onclick="updateCert(${i})">Update</button> </div> </div>`).join('');
+container.innerHTML = state.certs.map((c, i) => `<div class="cert-item"> <div class="cert-name"><span>${esc(c.name)}</span><span class="cert-pct">${c.pct}%</span></div> <div class="cert-bar"><div class="cert-bar-fill" style="width:${c.pct}%;background:${safeCssColor(c.color,'#888')};"></div></div> <div class="cert-input-row"> <input class="cert-pct-input" type="number" min="0" max="100" value="${c.pct}" id="cert-input-${i}" /> <button class="cert-update-btn" onclick="updateCert(${i})">Update</button> </div> </div>`).join('');
 }
 
 function renderGoals() {
 const container = document.getElementById('goals-list');
-container.innerHTML = state.goals.map((g, i) => `<div class="goal-item"> <div class="goal-check ${g.done ? 'checked' : ''}" onclick="toggleGoal(${i})">${g.done ? '✓' : ''}</div> <div class="goal-text ${g.done ? 'done-text' : ''}">${g.text}</div> </div>`).join('');
+container.innerHTML = state.goals.map((g, i) => `<div class="goal-item"> <div class="goal-check ${g.done ? 'checked' : ''}" onclick="toggleGoal(${i})">${g.done ? '✓' : ''}</div> <div class="goal-text ${g.done ? 'done-text' : ''}">${esc(g.text)}</div> </div>`).join('');
 }
 
 let streakWeekOffset = 0;
@@ -1323,7 +1325,7 @@ if (card) {
 const dots = card.querySelector('.mini-progress');
 if (dots) dots.innerHTML = week.tasks.map(t => {
 const cls = t.status === 'Completed' ? 'done' : t.status === 'In Progress' ? 'inprog' : t.status === 'Did Not Finish' ? 'failed' : '';
-return `<div class="mini-dot ${cls}" title="${t.label}: ${t.status}"></div>`;
+return `<div class="mini-dot ${cls}" title="${esc(t.label)}: ${esc(t.status)}"></div>`;
 }).join('');
 const prog = card.querySelector('.week-task-progress');
 if (prog) prog.textContent = `${week.tasks.filter(t=>t.status==='Completed').length}/${week.tasks.length} tasks`;
