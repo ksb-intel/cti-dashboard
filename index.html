@@ -90,7 +90,7 @@ overflow-x: hidden;
 
 /* Grid noise overlay */
 body::before {
-content: ‘’;
+content: '';
 position: fixed;
 inset: 0;
 background-image:
@@ -127,7 +127,7 @@ font-family: var(--mono); font-size: 12px; color: var(--blue);
 position: relative;
 }
 .logo-mark::before {
-content: ‘’;
+content: '';
 position: absolute;
 inset: 3px;
 background: var(--blue-glow);
@@ -184,7 +184,7 @@ position: relative;
 overflow: hidden;
 }
 .stat-card::after {
-content: ‘’;
+content: '';
 position: absolute;
 bottom: 0; left: 0; right: 0;
 height: 2px;
@@ -225,7 +225,7 @@ color: var(--text-secondary);
 display: flex; align-items: center; gap: 8px;
 }
 .section-title::before {
-content: ‘’;
+content: '';
 display: inline-block;
 width: 3px; height: 16px;
 background: var(--blue);
@@ -268,10 +268,10 @@ min-width: 52px;
 text-align: center;
 letter-spacing: 1px;
 }
-.week-card[data-status=“Completed”] .week-num { background: var(--green); color: var(--bg-primary); }
-.week-card[data-status=“In Progress”] .week-num { background: var(--blue); }
-.week-card[data-status=“Did Not Finish”] .week-num { background: var(--red); }
-.week-card[data-status=“Not Started”] .week-num { background: var(--border); color: var(--text-dim); }
+.week-card[data-status="Completed"] .week-num { background: var(--green); color: var(--bg-primary); }
+.week-card[data-status="In Progress"] .week-num { background: var(--blue); }
+.week-card[data-status="Did Not Finish"] .week-num { background: var(--red); }
+.week-card[data-status="Not Started"] .week-num { background: var(--border); color: var(--text-dim); }
 
 .week-header-content { flex: 1; padding: 12px 16px; }
 
@@ -474,7 +474,7 @@ text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary);
 margin-bottom: 14px;
 display: flex; align-items: center; gap: 8px;
 }
-.sidebar-title::before { content: ‘’; width: 3px; height: 13px; background: var(--red); display: inline-block; }
+.sidebar-title::before { content: ''; width: 3px; height: 13px; background: var(--red); display: inline-block; }
 
 /* STREAK TRACKER */
 .streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
@@ -1094,7 +1094,7 @@ function taskBlockHTML(weekNum, task) {
 }
 
 function quizSectionHTML(weekNum, quizzes) {
-const entries = quizzes.map((q, i) => quizEntryHTML(weekNum, i, q)).join(’’);
+const entries = quizzes.map((q, i) => quizEntryHTML(weekNum, i, q)).join('');
 return `
 
   <div class="quiz-section">
@@ -1109,7 +1109,7 @@ return `
 
 function quizEntryHTML(weekNum, i, q) {
 const pct = parseInt(q.score) || 0;
-const barColor = pct >= 85 ? ‘var(--green)’ : pct >= 70 ? ‘var(--blue)’ : ‘var(--red)’;
+const barColor = pct >= 85 ? 'var(--green)' : pct >= 70 ? 'var(--blue)' : 'var(--red)';
 return `
 
   <div class="quiz-entry" id="quiz-entry-${weekNum}-${i}">
@@ -1126,60 +1126,60 @@ return `
 
 function avgQuizScore(quizzes) {
 const valid = quizzes.filter(q => q.score && !isNaN(parseInt(q.score)));
-if (!valid.length) return ‘—’;
+if (!valid.length) return '—';
 const avg = Math.round(valid.reduce((a, q) => a + parseInt(q.score), 0) / valid.length);
-const color = avg >= 85 ? ‘var(--green)’ : avg >= 70 ? ‘var(--blue)’ : ‘var(--red)’;
+const color = avg >= 85 ? 'var(--green)' : avg >= 70 ? 'var(--blue)' : 'var(--red)';
 return `<span style="color:${color}">AVG: ${avg}%</span>`;
 }
 
 function renderStats() {
-const completed = state.weeks.filter(w => w.status === ‘Completed’).length;
-const inprog = state.weeks.filter(w => w.status === ‘In Progress’).length;
-const dnf = state.weeks.filter(w => w.status === ‘Did Not Finish’).length;
+const completed = state.weeks.filter(w => w.status === 'Completed').length;
+const inprog = state.weeks.filter(w => w.status === 'In Progress').length;
+const dnf = state.weeks.filter(w => w.status === 'Did Not Finish').length;
 
-document.getElementById(‘stat-completed’).textContent = completed;
-document.getElementById(‘stat-inprogress’).textContent = inprog;
-document.getElementById(‘stat-dnf’).textContent = dnf;
+document.getElementById('stat-completed').textContent = completed;
+document.getElementById('stat-inprogress').textContent = inprog;
+document.getElementById('stat-dnf').textContent = dnf;
 
 const allQuizzes = state.weeks.flatMap(w => w.quizzes).filter(q => q.score && !isNaN(parseInt(q.score)));
 if (allQuizzes.length) {
 const avg = Math.round(allQuizzes.reduce((a, q) => a + parseInt(q.score), 0) / allQuizzes.length);
-document.getElementById(‘stat-quiz’).textContent = avg + ‘%’;
+document.getElementById('stat-quiz').textContent = avg + '%';
 } else {
-document.getElementById(‘stat-quiz’).textContent = ‘—’;
+document.getElementById('stat-quiz').textContent = '—';
 }
 
 const streak = calcStreak();
-document.getElementById(‘stat-streak’).textContent = streak + ‘d’;
+document.getElementById('stat-streak').textContent = streak + 'd';
 
 const pct = Math.round((completed / state.weeks.length) * 100);
-document.getElementById(‘overall-bar’).style.width = pct + ‘%’;
-document.getElementById(‘overall-pct’).textContent = pct + ‘%’;
+document.getElementById('overall-bar').style.width = pct + '%';
+document.getElementById('overall-pct').textContent = pct + '%';
 }
 
 function renderCerts() {
-const container = document.getElementById(‘cert-tracker’);
-container.innerHTML = state.certs.map((c, i) => `<div class="cert-item"> <div class="cert-name"><span>${c.name}</span><span class="cert-pct">${c.pct}%</span></div> <div class="cert-bar"><div class="cert-bar-fill" style="width:${c.pct}%;background:${c.color};"></div></div> <div class="cert-input-row"> <input class="cert-pct-input" type="number" min="0" max="100" value="${c.pct}" id="cert-input-${i}" /> <button class="cert-update-btn" onclick="updateCert(${i})">Update</button> </div> </div>`).join(’’);
+const container = document.getElementById('cert-tracker');
+container.innerHTML = state.certs.map((c, i) => `<div class="cert-item"> <div class="cert-name"><span>${c.name}</span><span class="cert-pct">${c.pct}%</span></div> <div class="cert-bar"><div class="cert-bar-fill" style="width:${c.pct}%;background:${c.color};"></div></div> <div class="cert-input-row"> <input class="cert-pct-input" type="number" min="0" max="100" value="${c.pct}" id="cert-input-${i}" /> <button class="cert-update-btn" onclick="updateCert(${i})">Update</button> </div> </div>`).join('');
 }
 
 function renderGoals() {
-const container = document.getElementById(‘goals-list’);
-container.innerHTML = state.goals.map((g, i) => `<div class="goal-item"> <div class="goal-check ${g.done ? 'checked' : ''}" onclick="toggleGoal(${i})">${g.done ? '✓' : ''}</div> <div class="goal-text ${g.done ? 'done-text' : ''}">${g.text}</div> </div>`).join(’’);
+const container = document.getElementById('goals-list');
+container.innerHTML = state.goals.map((g, i) => `<div class="goal-item"> <div class="goal-check ${g.done ? 'checked' : ''}" onclick="toggleGoal(${i})">${g.done ? '✓' : ''}</div> <div class="goal-text ${g.done ? 'done-text' : ''}">${g.text}</div> </div>`).join('');
 }
 
 function renderStreak() {
-const grid = document.getElementById(‘streak-grid’);
+const grid = document.getElementById('streak-grid');
 const today = new Date();
 const days = [];
 for (let i = 27; i >= 0; i--) {
 const d = new Date(today);
 d.setDate(today.getDate() - i);
-days.push(d.toISOString().split(‘T’)[0]);
+days.push(d.toISOString().split('T')[0]);
 }
 grid.innerHTML = days.map(d => {
 const active = state.streak.includes(d);
 return `<div class="streak-day ${active ? 'active' : ''}" onclick="toggleStreak('${d}')" title="${d}"></div>`;
-}).join(’’);
+}).join('');
 }
 
 // ── INTERACTIONS ───────────────────────────────────────────────────────────
@@ -1189,9 +1189,9 @@ function attachWeekEvents(weekNum) {
 // restore expanded state
 if (expandedWeeks.has(weekNum)) {
 const card = document.getElementById(`week-card-${weekNum}`);
-if (card) card.classList.add(‘expanded’);
+if (card) card.classList.add('expanded');
 const body = document.getElementById(`week-body-${weekNum}`);
-if (body) body.style.display = ‘block’;
+if (body) body.style.display = 'block';
 }
 }
 
@@ -1199,14 +1199,14 @@ function toggleWeek(weekNum) {
 const card = document.getElementById(`week-card-${weekNum}`);
 const body = document.getElementById(`week-body-${weekNum}`);
 if (!card || !body) return;
-const isExpanded = card.classList.contains(‘expanded’);
+const isExpanded = card.classList.contains('expanded');
 if (isExpanded) {
-card.classList.remove(‘expanded’);
-body.style.display = ‘none’;
+card.classList.remove('expanded');
+body.style.display = 'none';
 expandedWeeks.delete(weekNum);
 } else {
-card.classList.add(‘expanded’);
-body.style.display = ‘block’;
+card.classList.add('expanded');
+body.style.display = 'block';
 expandedWeeks.add(weekNum);
 }
 }
@@ -1215,8 +1215,8 @@ function setWeekStatus(weekNum, status) {
 const week = state.weeks.find(w => w.week === weekNum);
 if (!week) return;
 week.status = status;
-if (status === ‘Completed’ && !week.dateFinished) {
-week.dateFinished = new Date().toLocaleDateString(‘en-US’);
+if (status === 'Completed' && !week.dateFinished) {
+week.dateFinished = new Date().toLocaleDateString('en-US');
 }
 saveState();
 renderWeeks();
@@ -1238,12 +1238,12 @@ renderStats();
 // refresh mini dots in header
 const card = document.getElementById(`week-card-${weekNum}`);
 if (card) {
-const dots = card.querySelector(’.mini-progress’);
+const dots = card.querySelector('.mini-progress');
 if (dots) dots.innerHTML = week.tasks.map(t => {
-const cls = t.status === ‘Completed’ ? ‘done’ : t.status === ‘In Progress’ ? ‘inprog’ : t.status === ‘Did Not Finish’ ? ‘failed’ : ‘’;
+const cls = t.status === 'Completed' ? 'done' : t.status === 'In Progress' ? 'inprog' : t.status === 'Did Not Finish' ? 'failed' : '';
 return `<div class="mini-dot ${cls}" title="${t.label}: ${t.status}"></div>`;
-}).join(’’);
-const prog = card.querySelector(’.week-task-progress’);
+}).join('');
+const prog = card.querySelector('.week-task-progress');
 if (prog) prog.textContent = `${week.tasks.filter(t=>t.status==='Completed').length}/${week.tasks.length} tasks`;
 }
 showToast(`${taskId} → ${status}`);
@@ -1261,40 +1261,40 @@ saveState();
 function setDate(weekNum, type, val) {
 const week = state.weeks.find(w => w.week === weekNum);
 if (!week) return;
-const formatted = val ? new Date(val + ‘T00:00:00’).toLocaleDateString(‘en-US’) : ‘’;
-if (type === ‘start’) week.dateStarted = formatted;
+const formatted = val ? new Date(val + 'T00:00:00').toLocaleDateString('en-US') : '';
+if (type === 'start') week.dateStarted = formatted;
 else week.dateFinished = formatted;
 saveState();
 // update header date display
 const card = document.getElementById(`week-card-${weekNum}`);
 if (card) {
-const dateel = card.querySelector(’.week-date’);
+const dateel = card.querySelector('.week-date');
 if (dateel) {
-const ds = week.dateStarted || ‘’;
-const df = week.dateFinished || ‘’;
-dateel.textContent = ds ? `${ds}${df ? ' → ' + df : ' → ...'}` : ‘Not scheduled’;
+const ds = week.dateStarted || '';
+const df = week.dateFinished || '';
+dateel.textContent = ds ? `${ds}${df ? ' → ' + df : ' → ...'}` : 'Not scheduled';
 }
 }
 showToast(`Week ${weekNum} date updated`);
 }
 
 function toInputDate(dateStr) {
-if (!dateStr) return ‘’;
+if (!dateStr) return '';
 const d = new Date(dateStr);
-if (isNaN(d)) return ‘’;
-return d.toISOString().split(‘T’)[0];
+if (isNaN(d)) return '';
+return d.toISOString().split('T')[0];
 }
 
 function addQuiz(weekNum) {
 const week = state.weeks.find(w => w.week === weekNum);
 if (!week) return;
-week.quizzes.push({ name: `Quiz ${week.quizzes.length + 1}`, score: ‘’, note: ‘’ });
+week.quizzes.push({ name: `Quiz ${week.quizzes.length + 1}`, score: '', note: '' });
 saveState();
 const container = document.getElementById(`quiz-entries-${weekNum}`);
 if (container) {
-container.innerHTML = week.quizzes.map((q, i) => quizEntryHTML(weekNum, i, q)).join(’’);
+container.innerHTML = week.quizzes.map((q, i) => quizEntryHTML(weekNum, i, q)).join('');
 // update avg label
-const header = container.closest(’.quiz-section’).querySelector(’.quiz-header span:last-child’);
+const header = container.closest('.quiz-section').querySelector('.quiz-header span:last-child');
 if (header) header.innerHTML = avgQuizScore(week.quizzes);
 }
 renderStats();
@@ -1306,18 +1306,18 @@ if (!week || !week.quizzes[idx]) return;
 week.quizzes[idx][field] = val;
 saveState();
 // live update bar and pct label
-if (field === ‘score’) {
+if (field === 'score') {
 const pct = parseInt(val) || 0;
-const barColor = pct >= 85 ? ‘var(--green)’ : pct >= 70 ? ‘var(--blue)’ : ‘var(--red)’;
+const barColor = pct >= 85 ? 'var(--green)' : pct >= 70 ? 'var(--blue)' : 'var(--red)';
 const entry = document.getElementById(`quiz-entry-${weekNum}-${idx}`);
 if (entry) {
-const fill = entry.querySelector(’.quiz-score-fill’);
-const label = entry.querySelector(‘span’);
-if (fill) { fill.style.width = pct + ‘%’; fill.style.background = barColor; }
-if (label) { label.textContent = val ? val + ‘%’ : ‘—’; label.style.color = barColor; }
+const fill = entry.querySelector('.quiz-score-fill');
+const label = entry.querySelector('span');
+if (fill) { fill.style.width = pct + '%'; fill.style.background = barColor; }
+if (label) { label.textContent = val ? val + '%' : '—'; label.style.color = barColor; }
 }
 renderStats();
-const header = document.getElementById(`quiz-entries-${weekNum}`)?.closest(’.quiz-section’)?.querySelector(’.quiz-header span:last-child’);
+const header = document.getElementById(`quiz-entries-${weekNum}`)?.closest('.quiz-section')?.querySelector('.quiz-header span:last-child');
 if (header) header.innerHTML = avgQuizScore(week.quizzes);
 }
 }
@@ -1328,14 +1328,14 @@ if (!week) return;
 week.quizzes.splice(idx, 1);
 saveState();
 const container = document.getElementById(`quiz-entries-${weekNum}`);
-if (container) container.innerHTML = week.quizzes.map((q, i) => quizEntryHTML(weekNum, i, q)).join(’’);
+if (container) container.innerHTML = week.quizzes.map((q, i) => quizEntryHTML(weekNum, i, q)).join('');
 renderStats();
 }
 
 function filterWeeks(filter, btn) {
 currentFilter = filter;
-document.querySelectorAll(‘.filter-tab’).forEach(b => b.classList.remove(‘active’, ‘active-red’));
-btn.classList.add(filter === ‘Did Not Finish’ ? ‘active-red’ : ‘active’);
+document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active', 'active-red'));
+btn.classList.add(filter === 'Did Not Finish' ? 'active-red' : 'active');
 renderWeeks();
 }
 
@@ -1367,7 +1367,7 @@ renderStats();
 function calcStreak() {
 if (!state.streak.length) return 0;
 const sorted = [...state.streak].sort().reverse();
-const today = new Date().toISOString().split(‘T’)[0];
+const today = new Date().toISOString().split('T')[0];
 let streak = 0;
 let checkDate = today;
 for (const d of sorted) {
@@ -1375,75 +1375,75 @@ if (d === checkDate) {
 streak++;
 const prev = new Date(checkDate);
 prev.setDate(prev.getDate() - 1);
-checkDate = prev.toISOString().split(‘T’)[0];
+checkDate = prev.toISOString().split('T')[0];
 } else if (d < checkDate) break;
 }
 return streak;
 }
 
 function saveNote() {
-state.notes = document.getElementById(‘intel-notes’).value;
+state.notes = document.getElementById('intel-notes').value;
 saveState();
-showToast(‘Intel notes saved’);
+showToast('Intel notes saved');
 }
 
 function showToast(msg) {
-const t = document.getElementById(‘toast’);
-t.textContent = ’// ’ + msg;
-t.classList.add(‘show’);
-setTimeout(() => t.classList.remove(‘show’), 2000);
+const t = document.getElementById('toast');
+t.textContent = '// ' + msg;
+t.classList.add('show');
+setTimeout(() => t.classList.remove('show'), 2000);
 }
 
 function updateClock() {
 const now = new Date();
-document.getElementById(‘clock’).textContent =
-now.toLocaleTimeString(‘en-US’, { hour12: false });
+document.getElementById('clock').textContent =
+now.toLocaleTimeString('en-US', { hour12: false });
 }
 
 // ── ICON GENERATION ────────────────────────────────────────────────────────
 // iOS requires a rasterized PNG for apple-touch-icon, not SVG
 function generateTouchIcon() {
 const size = 512;
-const canvas = document.createElement(‘canvas’);
+const canvas = document.createElement('canvas');
 canvas.width = size; canvas.height = size;
-const ctx = canvas.getContext(‘2d’);
+const ctx = canvas.getContext('2d');
 const cx = size / 2, cy = size / 2;
 
 // Background
-ctx.fillStyle = ‘#0b1120’;
+ctx.fillStyle = '#0b1120';
 ctx.fillRect(0, 0, size, size);
 
 // Outer ring (faint)
 ctx.beginPath();
 ctx.arc(cx, cy, 180, 0, Math.PI * 2);
-ctx.strokeStyle = ‘rgba(255,255,255,0.07)’;
+ctx.strokeStyle = 'rgba(255,255,255,0.07)';
 ctx.lineWidth = 12;
 ctx.stroke();
 
 // Mid ring
 ctx.beginPath();
 ctx.arc(cx, cy, 130, 0, Math.PI * 2);
-ctx.strokeStyle = ‘rgba(56,189,248,0.2)’;
+ctx.strokeStyle = 'rgba(56,189,248,0.2)';
 ctx.lineWidth = 10;
 ctx.stroke();
 
 // Inner ring
 ctx.beginPath();
 ctx.arc(cx, cy, 80, 0, Math.PI * 2);
-ctx.strokeStyle = ‘rgba(56,189,248,0.6)’;
+ctx.strokeStyle = 'rgba(56,189,248,0.6)';
 ctx.lineWidth = 14;
 ctx.stroke();
 
 // Center dot fill
 ctx.beginPath();
 ctx.arc(cx, cy, 32, 0, Math.PI * 2);
-ctx.fillStyle = ‘#38bdf8’;
+ctx.fillStyle = '#38bdf8';
 ctx.fill();
 
 // Center dot hole
 ctx.beginPath();
 ctx.arc(cx, cy, 14, 0, Math.PI * 2);
-ctx.fillStyle = ‘#0b1120’;
+ctx.fillStyle = '#0b1120';
 ctx.fill();
 
 // Crosshair lines — helper
@@ -1452,30 +1452,30 @@ ctx.beginPath();
 ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
 ctx.strokeStyle = color;
 ctx.lineWidth = w;
-ctx.lineCap = ‘round’;
+ctx.lineCap = 'round';
 ctx.stroke();
 }
 
 // Main lines (blue)
-crossLine(cx, 40,  cx, 170, ‘#38bdf8’, 10);
-crossLine(cx, 342, cx, 472, ‘#38bdf8’, 10);
-crossLine(40,  cy, 170, cy, ‘#38bdf8’, 10);
-crossLine(342, cy, 472, cy, ‘#38bdf8’, 10);
+crossLine(cx, 40,  cx, 170, '#38bdf8', 10);
+crossLine(cx, 342, cx, 472, '#38bdf8', 10);
+crossLine(40,  cy, 170, cy, '#38bdf8', 10);
+crossLine(342, cy, 472, cy, '#38bdf8', 10);
 
 // Accent tips (white)
-crossLine(cx, 40,  cx, 78,  ‘rgba(255,255,255,0.5)’, 10);
-crossLine(cx, 434, cx, 472, ‘rgba(255,255,255,0.5)’, 10);
-crossLine(40,  cy, 78,  cy, ‘rgba(255,255,255,0.5)’, 10);
-crossLine(434, cy, 472, cy, ‘rgba(255,255,255,0.5)’, 10);
+crossLine(cx, 40,  cx, 78,  'rgba(255,255,255,0.5)', 10);
+crossLine(cx, 434, cx, 472, 'rgba(255,255,255,0.5)', 10);
+crossLine(40,  cy, 78,  cy, 'rgba(255,255,255,0.5)', 10);
+crossLine(434, cy, 472, cy, 'rgba(255,255,255,0.5)', 10);
 
 // CTI label
-ctx.font = ‘bold 52px monospace’;
-ctx.fillStyle = ‘rgba(56,189,248,0.75)’;
-ctx.textAlign = ‘center’;
-ctx.fillText(‘CTI’, cx, 488);
+ctx.font = 'bold 52px monospace';
+ctx.fillStyle = 'rgba(56,189,248,0.75)';
+ctx.textAlign = 'center';
+ctx.fillText('CTI', cx, 488);
 
-const pngUrl = canvas.toDataURL(‘image/png’);
-document.getElementById(‘touch-icon’).setAttribute(‘href’, pngUrl);
+const pngUrl = canvas.toDataURL('image/png');
+document.getElementById('touch-icon').setAttribute('href', pngUrl);
 }
 
 generateTouchIcon();
@@ -1486,24 +1486,24 @@ let deferredInstallPrompt = null;
 // Register inline service worker for offline support
 const swCode = `const CACHE = 'cti-ops-v1'; const ASSETS = [location.href]; self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))); self.skipWaiting(); }); self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))) )); self.clients.claim(); }); self.addEventListener('fetch', e => { e.respondWith( caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match(e.request))) ); });`;
 
-if (‘serviceWorker’ in navigator) {
-const blob = new Blob([swCode], { type: ‘application/javascript’ });
+if ('serviceWorker' in navigator) {
+const blob = new Blob([swCode], { type: 'application/javascript' });
 const swUrl = URL.createObjectURL(blob);
 navigator.serviceWorker.register(swUrl).catch(() => {});
 }
 
 // Android Chrome install prompt
-window.addEventListener(‘beforeinstallprompt’, e => {
+window.addEventListener('beforeinstallprompt', e => {
 e.preventDefault();
 deferredInstallPrompt = e;
-if (!localStorage.getItem(‘pwa_dismissed’)) {
-setTimeout(() => document.getElementById(‘install-banner’).classList.add(‘visible’), 2000);
+if (!localStorage.getItem('pwa_dismissed')) {
+setTimeout(() => document.getElementById('install-banner').classList.add('visible'), 2000);
 }
 });
 
-window.addEventListener(‘appinstalled’, () => {
-document.getElementById(‘install-banner’).classList.remove(‘visible’);
-showToast(‘App installed successfully’);
+window.addEventListener('appinstalled', () => {
+document.getElementById('install-banner').classList.remove('visible');
+showToast('App installed successfully');
 });
 
 function installPWA() {
@@ -1511,58 +1511,58 @@ if (deferredInstallPrompt) {
 deferredInstallPrompt.prompt();
 deferredInstallPrompt.userChoice.then(() => {
 deferredInstallPrompt = null;
-document.getElementById(‘install-banner’).classList.remove(‘visible’);
+document.getElementById('install-banner').classList.remove('visible');
 });
 }
 }
 
 function dismissInstall() {
-document.getElementById(‘install-banner’).classList.remove(‘visible’);
-localStorage.setItem(‘pwa_dismissed’, ‘1’);
+document.getElementById('install-banner').classList.remove('visible');
+localStorage.setItem('pwa_dismissed', '1');
 }
 
 // Mobile nav tab switching
 function mobileNav(section, btn) {
-document.querySelectorAll(’.mobile-nav-btn’).forEach(b => b.classList.remove(‘active’));
-btn.classList.add(‘active’);
+document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
 
-const weeksSection = document.querySelector(’.weeks-section’);
-const sidebar = document.querySelector(’.sidebar’);
+const weeksSection = document.querySelector('.weeks-section');
+const sidebar = document.querySelector('.sidebar');
 
-if (section === ‘weeks’) {
-weeksSection.style.display = ‘block’;
-sidebar.classList.remove(‘mobile-visible’);
-} else if (section === ‘sidebar’) {
-weeksSection.style.display = ‘none’;
-sidebar.classList.add(‘mobile-visible’);
+if (section === 'weeks') {
+weeksSection.style.display = 'block';
+sidebar.classList.remove('mobile-visible');
+} else if (section === 'sidebar') {
+weeksSection.style.display = 'none';
+sidebar.classList.add('mobile-visible');
 // hide specific sidebar cards, show stats ones
-document.querySelectorAll(’.sidebar-card’).forEach(c => c.style.display = ‘block’);
-document.getElementById(‘intel-notes’).closest(’.sidebar-card’).style.display = ‘none’;
-document.getElementById(‘streak-grid’).closest(’.sidebar-card’).style.display = ‘none’;
-} else if (section === ‘notes’) {
-weeksSection.style.display = ‘none’;
-sidebar.classList.add(‘mobile-visible’);
-document.querySelectorAll(’.sidebar-card’).forEach(c => c.style.display = ‘none’);
-document.getElementById(‘intel-notes’).closest(’.sidebar-card’).style.display = ‘block’;
-} else if (section === ‘streak’) {
-weeksSection.style.display = ‘none’;
-sidebar.classList.add(‘mobile-visible’);
-document.querySelectorAll(’.sidebar-card’).forEach(c => c.style.display = ‘none’);
-document.getElementById(‘streak-grid’).closest(’.sidebar-card’).style.display = ‘block’;
+document.querySelectorAll('.sidebar-card').forEach(c => c.style.display = 'block');
+document.getElementById('intel-notes').closest('.sidebar-card').style.display = 'none';
+document.getElementById('streak-grid').closest('.sidebar-card').style.display = 'none';
+} else if (section === 'notes') {
+weeksSection.style.display = 'none';
+sidebar.classList.add('mobile-visible');
+document.querySelectorAll('.sidebar-card').forEach(c => c.style.display = 'none');
+document.getElementById('intel-notes').closest('.sidebar-card').style.display = 'block';
+} else if (section === 'streak') {
+weeksSection.style.display = 'none';
+sidebar.classList.add('mobile-visible');
+document.querySelectorAll('.sidebar-card').forEach(c => c.style.display = 'none');
+document.getElementById('streak-grid').closest('.sidebar-card').style.display = 'block';
 }
 }
 
 // iOS Safari install hint (no prompt API available on iOS)
 function checkIOSInstallHint() {
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-const isStandalone = window.matchMedia(’(display-mode: standalone)’).matches;
-if (isIOS && !isStandalone && !localStorage.getItem(‘ios_hint_shown’)) {
-localStorage.setItem(‘ios_hint_shown’, ‘1’);
-const banner = document.getElementById(‘install-banner’);
-banner.querySelector(’.install-banner-text’).innerHTML =
-‘<strong>// Install on iPhone</strong><br>Tap <strong style="color:var(--blue)">Share ↑</strong> then <strong style="color:var(--blue)">“Add to Home Screen”</strong> to install CTI Ops as an app.’;
-banner.querySelector(’.install-btn.primary’).style.display = ‘none’;
-setTimeout(() => banner.classList.add(‘visible’), 1500);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+if (isIOS && !isStandalone && !localStorage.getItem('ios_hint_shown')) {
+localStorage.setItem('ios_hint_shown', '1');
+const banner = document.getElementById('install-banner');
+banner.querySelector('.install-banner-text').innerHTML =
+'<strong>// Install on iPhone</strong><br>Tap <strong style="color:var(--blue)">Share ↑</strong> then <strong style="color:var(--blue)">"Add to Home Screen"</strong> to install CTI Ops as an app.';
+banner.querySelector('.install-btn.primary').style.display = 'none';
+setTimeout(() => banner.classList.add('visible'), 1500);
 }
 }
 checkIOSInstallHint();
