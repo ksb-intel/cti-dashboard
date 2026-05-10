@@ -1004,16 +1004,6 @@ const CERTS = [
   { name: "TryHackMe Pre-Security", pct: 100, color: "#22d3a0" }
 ];
 
-// ── SECURITY HELPERS ───────────────────────────────────────────────────────
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-function safeCssColor(val, fallback) {
-  return /^(#[0-9a-fA-F]{3,8}|var\(--[a-z-]+\))$/.test(String(val)) ? val : fallback;
-}
-
 // ── STATE ──────────────────────────────────────────────────────────────────
 let state = { weeks: [], goals: [], certs: [], streak: [], notes: "" };
 
